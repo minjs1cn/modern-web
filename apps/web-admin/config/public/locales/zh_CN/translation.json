@@ -1,0 +1,17 @@
+{
+	"login.title": "登陆系统",
+	"login.account": "用户名",
+	"login.password": "密码",
+	"login.submit": "登陆",
+	"login.password.forgot": "忘记密码",
+	"login.account.placeholder": "请输入用户名",
+	"login.password.placeholder": "请输入密码",
+	"login.remember.me": "记住我",
+
+
+  "menu.system": "系统管理",
+  "menu.system.user": "用户管理",
+  "menu.system.role": "角色管理",
+  "menu.system.menu": "菜单管理",
+  "menu.system.permission": "权限管理"
+}

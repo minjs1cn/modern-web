@@ -1,0 +1,18 @@
+{
+  "extends": "@modern-js",
+  "rules": {
+    "@typescript-eslint/no-extraneous-class": "warn",
+    "@typescript-eslint/no-parameter-properties": [
+      "warn",
+      {
+        "allows": [
+          "private",
+          "private readonly",
+          "readonly",
+          "protected",
+          "protected readonly"
+        ]
+      }
+    ]
+  }
+}

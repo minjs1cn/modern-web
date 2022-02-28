@@ -1,0 +1,10 @@
+{
+	"login.title": "Login System",
+	"login.account": "Account",
+	"login.password": "Password",
+	"login.submit": "Login",
+	"login.password.forgot": "Forgot Password",
+	"login.account.placeholder": "Please enter your account",
+	"login.password.placeholder": "Please enter your password",
+	"login.remember.me": "Remember me"
+}
