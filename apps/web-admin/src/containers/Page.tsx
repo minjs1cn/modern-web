@@ -54,6 +54,66 @@ const MockMenus: MenuAttributes[] = [
       },
     ],
   },
+  {
+    path: '/shop',
+    title: 'menu.shop',
+    icon: icons.user,
+    children: [
+      {
+        path: '/shop/list',
+        title: 'menu.shop.list',
+      },
+      {
+        path: '/shop/product',
+        title: 'menu.shop.product',
+      },
+    ],
+  },
+  {
+    path: '/shop',
+    title: 'menu.shop',
+    icon: icons.user,
+    children: [
+      {
+        path: '/shop/list',
+        title: 'menu.shop.list',
+      },
+      {
+        path: '/shop/product',
+        title: 'menu.shop.product',
+      },
+    ],
+  },
+  {
+    path: '/shop',
+    title: 'menu.shop',
+    icon: icons.user,
+    children: [
+      {
+        path: '/shop/list',
+        title: 'menu.shop.list',
+      },
+      {
+        path: '/shop/product',
+        title: 'menu.shop.product',
+      },
+    ],
+  },
+  {
+    path: '/shop',
+    title: 'menu.shop',
+    icon: icons.user,
+    children: [
+      {
+        path: '/shop/list',
+        title: 'menu.shop.list',
+      },
+      {
+        path: '/shop/product',
+        title: 'menu.shop.product',
+      },
+    ],
+  },
 ];
 
 function menusTranslation(menus: MenuAttributes[], t: TFunction<'transition'>) {

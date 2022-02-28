@@ -70,7 +70,8 @@ const PageLayout: FC<PageLayoutProps> = ({
         style={{
           minHeight: '100%',
         }}>
-        <Layout.Header>
+        <Layout.Header
+          style={{ position: 'fixed', left: 0, width: '100%', zIndex: 100 }}>
           <div className={styles.navbar}>
             <div className={styles.navbar__logo}>
               <Link to="/">
@@ -84,8 +85,17 @@ const PageLayout: FC<PageLayoutProps> = ({
             <div className={styles.navbar__tool}></div>
           </div>
         </Layout.Header>
-        <Layout hasSider={true}>
-          <Layout.Sider theme="light">
+        <Layout hasSider={true} style={{ paddingTop: 64 }}>
+          <Layout.Sider
+            theme="light"
+            style={{
+              position: 'fixed',
+              left: 0,
+              height: '100%',
+              width: 220,
+              top: 64,
+              overflowY: 'auto',
+            }}>
             <Menu
               mode="inline"
               defaultOpenKeys={menu ? [menu.path] : []}
@@ -93,7 +103,7 @@ const PageLayout: FC<PageLayoutProps> = ({
               {menus.map(renderMenuItem)}
             </Menu>
           </Layout.Sider>
-          <Layout style={{ padding: 16 }}>
+          <Layout style={{ padding: '16px 16px 16px 220px' }}>
             <Layout.Content style={{ background: '#fff' }}>
               {children}
             </Layout.Content>
