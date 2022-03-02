@@ -1,8 +1,7 @@
 import loadable from '@modern-js/runtime/loadable';
 import { Redirect, Route, Switch } from '@modern-js/runtime/router';
-import { useTranslation, TFunction } from 'react-i18next';
-import PageLayout, { MenuAttributes } from '@/components/PageLayout/PageLayout';
-import icons from '@/utils/icons';
+import { mockMenus } from './mock';
+import PageLayout from '@/components/PageLayout/PageLayout';
 
 const routes = [
   {
@@ -17,121 +16,28 @@ const routes = [
     path: '/system/role',
     component: loadable(() => import('./system/role/Role')),
   },
-];
-
-const MockMenus: MenuAttributes[] = [
   {
-    path: '/shop',
-    title: 'menu.shop',
-    icon: icons.user,
-    children: [
-      {
-        path: '/shop/list',
-        title: 'menu.shop.list',
-      },
-      {
-        path: '/shop/product',
-        title: 'menu.shop.product',
-      },
-    ],
-  },
-  {
-    path: '/system',
-    title: 'menu.system',
-    icon: icons.setting,
-    children: [
-      {
-        path: '/system/permission',
-        title: 'menu.system.permission',
-      },
-      {
-        path: '/system/role',
-        title: 'menu.system.role',
-      },
-      {
-        path: '/system/user',
-        title: 'menu.system.user',
-      },
-    ],
-  },
-  {
-    path: '/shop',
-    title: 'menu.shop',
-    icon: icons.user,
-    children: [
-      {
-        path: '/shop/list',
-        title: 'menu.shop.list',
-      },
-      {
-        path: '/shop/product',
-        title: 'menu.shop.product',
-      },
-    ],
-  },
-  {
-    path: '/shop',
-    title: 'menu.shop',
-    icon: icons.user,
-    children: [
-      {
-        path: '/shop/list',
-        title: 'menu.shop.list',
-      },
-      {
-        path: '/shop/product',
-        title: 'menu.shop.product',
-      },
-    ],
-  },
-  {
-    path: '/shop',
-    title: 'menu.shop',
-    icon: icons.user,
-    children: [
-      {
-        path: '/shop/list',
-        title: 'menu.shop.list',
-      },
-      {
-        path: '/shop/product',
-        title: 'menu.shop.product',
-      },
-    ],
-  },
-  {
-    path: '/shop',
-    title: 'menu.shop',
-    icon: icons.user,
-    children: [
-      {
-        path: '/shop/list',
-        title: 'menu.shop.list',
-      },
-      {
-        path: '/shop/product',
-        title: 'menu.shop.product',
-      },
-    ],
+    path: '/system/user',
+    component: loadable(() => import('./system/user/User')),
   },
 ];
 
-function menusTranslation(menus: MenuAttributes[], t: TFunction<'transition'>) {
-  menus.forEach(menu => {
-    menu.title = t(menu.title);
-    if (menu.children) {
-      menusTranslation(menu.children, t);
-    }
-  });
-  return menus;
-}
+// function menusTranslation(menus: MenuAttributes[], t: TFunction<'transition'>) {
+//   menus.forEach(menu => {
+//     menu.title = t(menu.title);
+//     if (menu.children) {
+//       menusTranslation(menu.children, t);
+//     }
+//   });
+//   return menus;
+// }
 
 export default function Page() {
-  const { t } = useTranslation();
-  const menus = menusTranslation(MockMenus, t);
+  // const { t } = useTranslation();
+  // const menus = menusTranslation(MockMenus, t);
 
   return (
-    <PageLayout menus={menus}>
+    <PageLayout menus={mockMenus}>
       <Switch>
         {routes.map(route => (
           <Route key={route.path} {...route} />
