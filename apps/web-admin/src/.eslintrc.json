@@ -1,3 +1,6 @@
 {
-  "extends": ["@modern-js-app"]
+  "extends": ["@modern-js-app"],
+  "rules": {
+    "no-console": "warn"
+  }
 }

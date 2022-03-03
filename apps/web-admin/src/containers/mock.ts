@@ -1,11 +1,12 @@
 export enum PermissionCategory {
+  unKnow = 0,
   Menu = 1,
   Action = 2,
 }
 
 export type Permission = {
   id: number;
-  parentId: number | null;
+  parentId: number;
   path: string;
   title: string;
   description: string;
@@ -15,7 +16,7 @@ export type Permission = {
 export const mockPermissions = [
   {
     id: 1,
-    parentId: null,
+    parentId: -1,
     category: PermissionCategory.Menu,
     title: '系统管理',
     path: '/system',
@@ -48,7 +49,7 @@ export const mockPermissions = [
 
   {
     id: 11,
-    parentId: null,
+    parentId: -1,
     category: PermissionCategory.Action,
     title: '权限管理',
     path: '/system/permission',
@@ -89,7 +90,7 @@ export const mockPermissions = [
 
   {
     id: 16,
-    parentId: null,
+    parentId: -1,
     category: PermissionCategory.Action,
     title: '角色管理',
     path: '/system/role',
@@ -130,7 +131,7 @@ export const mockPermissions = [
 
   {
     id: 21,
-    parentId: null,
+    parentId: -1,
     category: PermissionCategory.Action,
     title: '用户管理',
     path: '/system/user',
@@ -170,23 +171,22 @@ export const mockPermissions = [
   },
 ];
 
+export type PermissionItem = Permission & {
+  children?: PermissionItem[];
+};
+
 export function createData(data: Permission[]) {
-  const result: any[] = [];
+  const result: PermissionItem[] = [];
   data.forEach(item => {
-    if (item.parentId === null) {
-      result.push({
-        ...item,
-        children: [],
-      });
+    if (item.parentId === -1) {
+      result.push(item);
     }
   });
   data.forEach(item => {
-    if (item.parentId !== null) {
+    if (item.parentId !== -1) {
       result.forEach(parent => {
         if (parent.id === item.parentId) {
-          parent.children.push({
-            ...item,
-          });
+          parent.children = [...(parent.children || []), item];
         }
       });
     }
@@ -201,3 +201,29 @@ export const mockMenus = createData(
 export const mockActions = createData(
   mockPermissions.filter(item => item.category === PermissionCategory.Action),
 );
+
+const SuperPermission: Permission = {
+  id: -1,
+  parentId: -1,
+  path: '',
+  title: '无',
+  description: '',
+  category: PermissionCategory.unKnow,
+};
+
+// 获取当前权限的父级所有同级别权限
+export function getPermissionParent(items: Permission[], row: Permission) {
+  const { category, parentId } = row;
+  const data = items.filter(item => item.category === category);
+
+  if (parentId === -1) {
+    return [SuperPermission];
+  }
+
+  const result = data.find(item => item.id === parentId);
+  if (result) {
+    return data.filter(item => item.parentId === result.parentId);
+  }
+
+  return [SuperPermission];
+}
