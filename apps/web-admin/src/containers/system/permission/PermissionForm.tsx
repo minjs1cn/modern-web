@@ -1,11 +1,11 @@
 import { Form, FormInstance, Input, Select } from 'antd';
 import { FC } from 'react';
-import { PermissionItem } from '@/containers/mock';
+import { Permission } from '@/services/type';
 
 type PermissionFormProps = {
   form: FormInstance;
   isUpdate?: boolean;
-  parent: PermissionItem[];
+  parent: Permission[];
 };
 
 const PermissionForm: FC<PermissionFormProps> = ({

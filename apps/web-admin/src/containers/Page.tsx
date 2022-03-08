@@ -1,7 +1,9 @@
 import loadable from '@modern-js/runtime/loadable';
 import { Redirect, Route, Switch } from '@modern-js/runtime/router';
-import { mockMenus } from './mock';
 import PageLayout from '@/components/PageLayout/PageLayout';
+import { useAuthMenus } from '@/hooks/useAuth';
+import { useIsLogin } from '@/hooks/useIsLogin';
+import LoadingOverlay from '@/components/LoadingOverlay/LoadingOverlay';
 
 const routes = [
   {
@@ -22,22 +24,16 @@ const routes = [
   },
 ];
 
-// function menusTranslation(menus: MenuAttributes[], t: TFunction<'transition'>) {
-//   menus.forEach(menu => {
-//     menu.title = t(menu.title);
-//     if (menu.children) {
-//       menusTranslation(menu.children, t);
-//     }
-//   });
-//   return menus;
-// }
-
 export default function Page() {
-  // const { t } = useTranslation();
-  // const menus = menusTranslation(MockMenus, t);
+  useIsLogin();
+  const { userMenus } = useAuthMenus();
+
+  if (userMenus.length === 0) {
+    return <LoadingOverlay fullscreen={true} />;
+  }
 
   return (
-    <PageLayout menus={mockMenus}>
+    <PageLayout menus={userMenus}>
       <Switch>
         {routes.map(route => (
           <Route key={route.path} {...route} />

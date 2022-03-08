@@ -33,7 +33,8 @@
   "eslintIgnore": [
     "node_modules/",
     "dist/",
-    ".rpt2_cache/"
+    ".rpt2_cache/",
+    "config/"
   ],
   "workspaces": {
     "packages": [

@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
-import userReducer from './userSlice';
+import logger from 'redux-logger';
+import authReducer from './authSlice';
+import permissionReducer from './permissionSlice';
 
 const store = configureStore({
   reducer: {
-    user: userReducer,
+    auth: authReducer,
+    permission: permissionReducer,
   },
+  middleware: get => get().concat(logger),
 });
 
 export type AppDispatch = typeof store.dispatch;

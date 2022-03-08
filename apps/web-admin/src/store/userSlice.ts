@@ -1,34 +1,54 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ApiUser } from '@services/login';
-import { login as apiLogin } from '@/services/login';
+import { GetSystemUserRequest, UserService } from '@/services/userService';
 
-type UserSliceState = {
-  info: null | ApiUser;
+import type { Pagination, User } from '@/services/type';
+
+export * from '@/services/authService';
+
+const ns = 'user';
+
+export type UserSliceState = {
+  list: User[];
+  pagination: Pagination;
 };
+
+export const getSystemUserThunk = createAsyncThunk(
+  `${ns}/getSystemPermission`,
+  async (req: GetSystemUserRequest) => {
+    const { code, data, message } = await UserService.getSystemUser(req);
+    if (code === 0) {
+      return data;
+    } else {
+      throw new Error(message);
+    }
+  },
+);
 
 const initialState: UserSliceState = {
-  info: null,
+  list: [],
+  pagination: {
+    page: 1,
+    size: 10,
+  },
 };
 
-export const login = createAsyncThunk('user/login', apiLogin);
-
-export const userSlice = createSlice({
-  name: 'user',
+export const permissionSlice = createSlice({
+  name: ns,
   initialState,
   reducers: {
-    setUserInfo: (state, action: { payload: ApiUser }) => {
-      state.info = action.payload;
+    setUsers: (state, { payload }) => {
+      state.list = payload;
+    },
+    setPagination: (state, { payload }) => {
+      state.pagination = payload;
     },
   },
   extraReducers: builder => {
-    builder.addCase(login.fulfilled, (state, { payload }) => {
-      const data = payload;
-      if (data) {
-        state.info = data;
-      }
+    builder.addCase(getSystemUserThunk.fulfilled, (state, { payload }) => {
+      state.list = payload;
     });
   },
 });
 
-export const { setUserInfo } = userSlice.actions;
-export default userSlice.reducer;
+export const { setUsers, setPagination } = permissionSlice.actions;
+export default permissionSlice.reducer;

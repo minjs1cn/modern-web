@@ -1,40 +1,21 @@
-import {
-  PageHeader,
-  Form,
-  Table,
-  Typography,
-  Button,
-  Space,
-  Popconfirm,
-} from 'antd';
+import { PageHeader, Form, Table, Button, Space, Popconfirm } from 'antd';
 import { useState } from 'react';
 import PermissionForm from './PermissionForm';
+import { getPermissionParent, PermissionItem, SuperPermission } from './utils';
 import {
-  getPermissionParent,
-  mockActions,
-  mockMenus,
-  mockPermissions,
-  PermissionItem,
-} from '@/containers/mock';
+  useCreateOrUpdatePermission,
+  useDeletePermission,
+  usePermission,
+} from './usePermission';
 import DrawerForm from '@/components/DrawerForm/DrawerForm';
-
-const rowSelection = {
-  // onChange: (selectedRowKeys, selectedRows) => {
-  //   console.log(
-  //     `selectedRowKeys: ${selectedRowKeys}`,
-  //     'selectedRows: ',
-  //     selectedRows,
-  //   );
-  // },
-  // onSelect: (record, selected, selectedRows) => {
-  //   console.log(record, selected, selectedRows);
-  // },
-  // onSelectAll: (selected, selectedRows, changeRows) => {
-  //   console.log(selected, selectedRows, changeRows);
-  // },
-};
+import { PermissionCategory } from '@/services/type';
 
 export default function Permission() {
+  const { list, menus, actions, loading } = usePermission();
+  const { createOrUpdate, loading: actionLoading } =
+    useCreateOrUpdatePermission();
+  const { deleteAction, loading: deleteLoading } = useDeletePermission();
+
   const columns = [
     {
       title: '名称',
@@ -63,7 +44,7 @@ export default function Permission() {
           <Button
             type="primary"
             size="small"
-            onClick={() => onAdd(row.id, row)}>
+            onClick={() => onAdd(row.category, row.id, row)}>
             新增
           </Button>
           <Button
@@ -80,7 +61,11 @@ export default function Permission() {
               cancelText="no"
               okText="ok"
               onConfirm={() => onDelete(row)}>
-              <Button type="ghost" size="small" danger={true}>
+              <Button
+                loading={deleteLoading}
+                type="ghost"
+                size="small"
+                danger={true}>
                 删除
               </Button>
             </Popconfirm>
@@ -90,28 +75,30 @@ export default function Permission() {
     },
   ];
 
-  const onAdd = (parentId: number, row?: PermissionItem) => {
+  const onAdd = (
+    category: PermissionCategory,
+    parentId: number,
+    row?: PermissionItem,
+  ) => {
     setVisible(true);
-    if (row) {
-      setParent([row]);
-      form.setFieldsValue({
-        category: row.category,
-        path: row.path,
-      });
-    }
     form.setFieldsValue({
+      category,
       parentId,
     });
+    if (row) {
+      setParent([row]);
+    } else {
+      setParent([SuperPermission]);
+    }
   };
 
   const onDelete = (row: PermissionItem) => {
-    console.log(row);
+    deleteAction(row);
   };
 
   const onEdit = (row: PermissionItem) => {
-    console.log(row);
     setVisible(true);
-    setParent(getPermissionParent(mockPermissions, row));
+    setParent(getPermissionParent(list, row));
     form.setFieldsValue(row);
   };
 
@@ -119,34 +106,57 @@ export default function Permission() {
   const [visible, setVisible] = useState(false);
   const [parent, setParent] = useState<PermissionItem[]>([]);
 
+  const onConfirm = async () => {
+    await createOrUpdate(form.getFieldsValue());
+    setVisible(false);
+  };
+
   return (
-    <PageHeader
-      title="权限管理"
-      extra={
-        <Space>
-          <Button type="primary">新增</Button>
-        </Space>
-      }>
-      <Typography.Text>菜单权限</Typography.Text>
-      <Table
-        pagination={false}
-        columns={columns}
-        rowSelection={{ ...rowSelection }}
-        dataSource={mockMenus}
-      />
-      <Typography.Text>操作权限</Typography.Text>
-      <Table
-        pagination={false}
-        columns={columns}
-        rowSelection={{ ...rowSelection }}
-        dataSource={mockActions}
-      />
+    <>
+      <PageHeader
+        title="菜单权限"
+        extra={
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => onAdd(PermissionCategory.Menu, -1)}>
+              新增
+            </Button>
+          </Space>
+        }>
+        <Table
+          loading={loading}
+          pagination={false}
+          columns={columns}
+          dataSource={menus}
+        />
+      </PageHeader>
+      <PageHeader
+        title="操作权限"
+        extra={
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => onAdd(PermissionCategory.Action, -1)}>
+              新增
+            </Button>
+          </Space>
+        }>
+        <Table
+          loading={loading}
+          pagination={false}
+          columns={columns}
+          dataSource={actions}
+        />
+      </PageHeader>
       <DrawerForm
         title="权限"
         visible={visible}
+        confirmButtonProps={{ loading: actionLoading }}
+        onConfirm={onConfirm}
         onCancel={() => setVisible(false)}>
         <PermissionForm form={form} isUpdate={true} parent={parent} />
       </DrawerForm>
-    </PageHeader>
+    </>
   );
 }

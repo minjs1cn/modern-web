@@ -1,4 +1,4 @@
-import { Button, Drawer, Space } from 'antd';
+import { Button, ButtonProps, Drawer, Space } from 'antd';
 import { FC } from 'react';
 
 type DrawerFormProps = {
@@ -9,6 +9,7 @@ type DrawerFormProps = {
   onCancel?: () => void;
   confirmButtonText?: string;
   onConfirm?: () => void;
+  confirmButtonProps?: ButtonProps;
 };
 
 const DrawerForm: FC<DrawerFormProps> = ({
@@ -20,6 +21,7 @@ const DrawerForm: FC<DrawerFormProps> = ({
   confirmButtonText = '确定',
   visible,
   children,
+  confirmButtonProps = {},
 }) => (
   <Drawer
     title={title}
@@ -30,7 +32,7 @@ const DrawerForm: FC<DrawerFormProps> = ({
     extra={
       <Space>
         <Button onClick={onCancel}>{cancelButtonText}</Button>
-        <Button type="primary" onClick={onConfirm}>
+        <Button type="primary" onClick={onConfirm} {...confirmButtonProps}>
           {confirmButtonText}
         </Button>
       </Space>
