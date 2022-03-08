@@ -1,5 +1,6 @@
 import { PageHeader, Form, Table, Button, Space, Popconfirm } from 'antd';
 import { useState } from 'react';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import PermissionForm from './PermissionForm';
 import { getPermissionParent, PermissionItem, SuperPermission } from './utils';
 import {
@@ -7,66 +8,73 @@ import {
   useDeletePermission,
   usePermission,
 } from './usePermission';
+import { usePermissionTranslation } from './usePermissionTranslation';
 import DrawerForm from '@/components/DrawerForm/DrawerForm';
 import { PermissionCategory } from '@/services/type';
+import { useNormalTransilation } from '@/hooks/useNormalTransilation';
 
 export default function Permission() {
   const { list, menus, actions, loading } = usePermission();
   const { createOrUpdate, loading: actionLoading } =
     useCreateOrUpdatePermission();
-  const { deleteAction, loading: deleteLoading } = useDeletePermission();
+  const { deleteAction } = useDeletePermission();
+  const {
+    addBtnText,
+    saveBtnText,
+    cancelBtnText,
+    editFormTitle,
+    tableActionTitle,
+    deleteMessageTitle,
+  } = useNormalTransilation();
+  const { menuTitle, actionTitle, filedTitle, filedDescription, filedPath } =
+    usePermissionTranslation();
+  const [form] = Form.useForm();
+  const [formVisible, setFormVisible] = useState(false);
+  const [parent, setParent] = useState<PermissionItem[]>([]);
 
   const columns = [
     {
-      title: '名称',
+      title: filedTitle,
       dataIndex: 'title',
       key: 'title',
       width: '150px',
     },
     {
-      title: '描述',
+      title: filedDescription,
       dataIndex: 'description',
       key: 'description',
       width: '300px',
     },
     {
-      title: '路径',
+      title: filedPath,
       dataIndex: 'path',
       key: 'path',
     },
     {
-      title: '操作',
+      title: tableActionTitle,
       dataIndex: 'actions',
       key: 'actions',
       width: '200px',
       render: (_: any, row: PermissionItem) => (
         <Space>
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => onAdd(row.category, row.id, row)}>
-            新增
+          <Button size="small" onClick={() => onAdd(row.category, row.id, row)}>
+            <PlusOutlined />
           </Button>
           <Button
-            type="ghost"
             size="small"
             onClick={() => {
               onEdit(row);
             }}>
-            编辑
+            <EditOutlined />
           </Button>
           {(!row.children || row.children.length === 0) && (
             <Popconfirm
-              title="确认要删除吗？"
+              title={deleteMessageTitle}
               cancelText="no"
               okText="ok"
               onConfirm={() => onDelete(row)}>
-              <Button
-                loading={deleteLoading}
-                type="ghost"
-                size="small"
-                danger={true}>
-                删除
+              <Button size="small" danger={true}>
+                <DeleteOutlined />
               </Button>
             </Popconfirm>
           )}
@@ -80,7 +88,7 @@ export default function Permission() {
     parentId: number,
     row?: PermissionItem,
   ) => {
-    setVisible(true);
+    setFormVisible(true);
     form.setFieldsValue({
       category,
       parentId,
@@ -92,35 +100,31 @@ export default function Permission() {
     }
   };
 
-  const onDelete = (row: PermissionItem) => {
-    deleteAction(row);
+  const onDelete = async (row: PermissionItem) => {
+    await deleteAction(row);
   };
 
   const onEdit = (row: PermissionItem) => {
-    setVisible(true);
+    setFormVisible(true);
     setParent(getPermissionParent(list, row));
     form.setFieldsValue(row);
   };
 
-  const [form] = Form.useForm();
-  const [visible, setVisible] = useState(false);
-  const [parent, setParent] = useState<PermissionItem[]>([]);
-
   const onConfirm = async () => {
     await createOrUpdate(form.getFieldsValue());
-    setVisible(false);
+    setFormVisible(false);
   };
 
   return (
     <>
       <PageHeader
-        title="菜单权限"
+        title={menuTitle}
         extra={
           <Space>
             <Button
               type="primary"
               onClick={() => onAdd(PermissionCategory.Menu, -1)}>
-              新增
+              {addBtnText}
             </Button>
           </Space>
         }>
@@ -132,13 +136,13 @@ export default function Permission() {
         />
       </PageHeader>
       <PageHeader
-        title="操作权限"
+        title={actionTitle}
         extra={
           <Space>
             <Button
               type="primary"
               onClick={() => onAdd(PermissionCategory.Action, -1)}>
-              新增
+              {addBtnText}
             </Button>
           </Space>
         }>
@@ -150,11 +154,13 @@ export default function Permission() {
         />
       </PageHeader>
       <DrawerForm
-        title="权限"
-        visible={visible}
+        title={editFormTitle}
+        visible={formVisible}
         confirmButtonProps={{ loading: actionLoading }}
+        confirmButtonText={saveBtnText}
+        cancelButtonText={cancelBtnText}
         onConfirm={onConfirm}
-        onCancel={() => setVisible(false)}>
+        onCancel={() => setFormVisible(false)}>
         <PermissionForm form={form} isUpdate={true} parent={parent} />
       </DrawerForm>
     </>
